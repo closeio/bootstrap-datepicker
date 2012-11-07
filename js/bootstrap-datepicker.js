@@ -37,11 +37,7 @@
 		this.language = options.language||this.element.data('date-language')||"en";
 		this.language = this.language in dates ? this.language : "en";
 		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
-        this.parentEl = options.parentEl || 'body';
-        this.offsetTweak = {
-            left: -1 * $(this.parentEl).offset().left,
-            top: -1 * $(this.parentEl).offset().top
-        };
+        this.parentEl = (options.parentEl && $(options.parentEl)) || $('body');
 		this.picker = $(DPGlobal.template)
 							.appendTo(this.parentEl)
 							.on({
@@ -214,9 +210,13 @@
 							return $(this).css('z-index') != 'auto';
 						}).first().css('z-index'))+10;
 			var offset = this.component ? this.component.offset() : this.element.offset();
+            var parentOffset = {
+                top: this.parentEl.offset().top - this.parentEl.scrollTop(),
+                left: this.parentEl.offset().left - this.parentEl.scrollLeft(),
+            };
 			this.picker.css({
-				top: offset.top + this.height + this.offsetTweak.top,
-				left: offset.left + this.offsetTweak.left,
+				top: offset.top + this.height - parentOffset.top,
+				left: offset.left - parentOffset.left,
 				zIndex: zIndex
 			});
 		},
