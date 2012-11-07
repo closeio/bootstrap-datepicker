@@ -37,8 +37,13 @@
 		this.language = options.language||this.element.data('date-language')||"en";
 		this.language = this.language in dates ? this.language : "en";
 		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
+        this.parentEl = options.parentEl || 'body';
+        this.offsetTweak = {
+            left: -1 * $(this.parentEl).offset().left,
+            top: -1 * $(this.parentEl).offset().top
+        };
 		this.picker = $(DPGlobal.template)
-							.appendTo('body')
+							.appendTo(this.parentEl)
 							.on({
 								click: $.proxy(this.click, this)
 							});
@@ -210,8 +215,8 @@
 						}).first().css('z-index'))+10;
 			var offset = this.component ? this.component.offset() : this.element.offset();
 			this.picker.css({
-				top: offset.top + this.height,
-				left: offset.left,
+				top: offset.top + this.height + this.offsetTweak.top,
+				left: offset.left + this.offsetTweak.left,
 				zIndex: zIndex
 			});
 		},
