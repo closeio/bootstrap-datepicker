@@ -96,6 +96,7 @@
 		this._process_options(options);
 
 		this.element = $(element);
+		this.container = (options.container && $(options.container)) || $('body');
 		this.isInline = false;
 		this.isInput = this.element.is('input');
 		this.component = this.element.is('.date') ? this.element.find('.add-on, .input-group-addon, .btn') : false;
@@ -426,7 +427,8 @@
 			if (this.element.attr('readonly'))
 				return;
 			if (!this.isInline)
-				this.picker.appendTo('body');
+				this.picker.appendTo(this.container);
+			this.picker.show();
 			this.place();
 			this.picker.show();
 			this._attachSecondaryEvents();
@@ -593,11 +595,16 @@
 				if ( itemZIndex !== 'auto' && itemZIndex !== 0 ) parentsZindex.push( parseInt( itemZIndex ) );
 			});
 			var zIndex = Math.max.apply( Math, parentsZindex ) + 10;
+			var containerOffset = {
+				top: this.container.offset().top - this.container.scrollTop(),
+				left: this.container.offset().left - this.container.scrollLeft(),
+			};
+
 			var offset = this.component ? this.component.parent().offset() : this.element.offset();
 			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(false);
 			var width = this.component ? this.component.outerWidth(true) : this.element.outerWidth(false);
-			var left = offset.left,
-				top = offset.top;
+			var left = offset.left - containerOffset.left,
+				top = offset.top - containerOffset.top;
 
 			this.picker.removeClass(
 				'datepicker-orient-top datepicker-orient-bottom '+
@@ -619,7 +626,7 @@
 				} else if (offset.left + calendarWidth > windowWidth) {
 					// the calendar passes the widow right edge. Align it to component right side
 					this.picker.addClass('datepicker-orient-right');
-					left = offset.left + width - calendarWidth;
+					left = offset.left + width - calendarWidth - containerOffset.left;
 				} else {
 					// Default to left
 					this.picker.addClass('datepicker-orient-left');
@@ -631,8 +638,8 @@
 			var yorient = this.o.orientation.y,
 				top_overflow, bottom_overflow;
 			if (yorient === 'auto'){
-				top_overflow = -scrollTop + offset.top - calendarHeight;
-				bottom_overflow = scrollTop + windowHeight - (offset.top + height + calendarHeight);
+				top_overflow = -scrollTop + top - calendarHeight;
+				bottom_overflow = scrollTop + windowHeight - (top + height + calendarHeight);
 				if (Math.max(top_overflow, bottom_overflow) === bottom_overflow)
 					yorient = 'top';
 				else
