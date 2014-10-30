@@ -1103,6 +1103,8 @@
 			var ix = this.dates.contains(date);
 			if (!date){
 				this.dates.clear();
+			} else if (this.dates.length === 1 && this.dates[0].toUTCString() === date.toUTCString()) {
+				return	// don't untoggle a date if the new value is the same as the value that's already stored
 			}
 
 			if (ix !== -1){
