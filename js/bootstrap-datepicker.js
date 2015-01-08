@@ -445,6 +445,12 @@
 			if (!this.picker.is(':visible'))
 				return this;
 			this.focusDate = null;
+
+			// focus the input before hiding the picker to avoid its re-opening
+			if (this.isInput) {
+				this.element.focus();
+			}
+
 			this.picker.hide().detach();
 			this._detachSecondaryEvents();
 			this.viewMode = this.o.startView;
