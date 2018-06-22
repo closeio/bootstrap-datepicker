@@ -87,6 +87,9 @@
 	// Picker object
 
 	var Datepicker = function(element, options){
+		this._events = [];
+		this._secondaryEvents = [];
+
 		this._process_options(options);
 
 		this.dates = new DateArray();
@@ -284,8 +287,6 @@
 			}
 			o.showOnFocus = o.showOnFocus !== undefined ? o.showOnFocus : true;
         },
-		_events: [],
-		_secondaryEvents: [],
 		_applyEvents: function(evs){
 			for (var i=0, el, ch, ev; i < evs.length; i++){
 				el = evs[i][0];
